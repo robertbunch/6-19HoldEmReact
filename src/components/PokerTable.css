@@ -5,3 +5,13 @@
     padding: 20px;
 }
 
+.the-numbers{
+    color: white;
+    font-size: 30px;
+    font-family: 'Lobster', cursive;
+}
+
+.player-message{
+    font-size: 30px;
+    color: orange;
+}
