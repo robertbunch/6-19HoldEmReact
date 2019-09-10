@@ -19,6 +19,19 @@ class PokerTable extends Component{
         }
     }
 
+    checkHandRank = ()=>{
+        // ['Ad', 'As', 'Jc', 'Th', '2d', '3c', 'Kd']
+        let playerPlusComm = [...this.state.playerHand,...this.state.communityHand]
+        let dealerPlusComm = [...this.state.dealerHand,...this.state.communityHand]
+        
+        
+        
+        const playerhandRank = window.Hand.solve(playerPlusComm);
+        const dealerHandRank = window.Hand.solve(dealerPlusComm);
+        console.log(playerhandRank);
+        console.log(dealerHandRank);
+    }
+
     // this method is made by us! Not a "react" method
     // in here we deal the first 4 cards
     prepDeck = ()=>{
@@ -33,7 +46,8 @@ class PokerTable extends Component{
         // because we removed 4
         this.setState({
             playerHand: [card1,card3],
-            dealerHand: [card2,card4]
+            dealerHand: [card2,card4],
+            communityHand: ['deck','deck','deck','deck','deck']
         })
     };
 
@@ -62,6 +76,36 @@ class PokerTable extends Component{
         },2000)
     }
 
+    // Check calls to draw a new community card.
+    // 1. 3 cards (flop), 2. 1 card (turn), 3. 1 card (river)
+    check = ()=>{
+        // console.log("User clicked check");
+        // We do not want to mutate or change state
+        // thats reacts job. Instead, we make a copy
+        // do stuff to the copy, and hand teh copy to setState
+        let communityNewHand = [...this.state.communityHand];
+        if(communityNewHand[0] === 'deck'){
+            // this must be the flop
+            communityNewHand = [
+                this.deck.cards.shift(),
+                this.deck.cards.shift(),
+                this.deck.cards.shift(),
+            ]
+        }else{
+            // its not the flop. we know because thers alreadyt a card in slot 1
+            communityNewHand.push(this.deck.cards.shift());
+        }
+        
+        if(communityNewHand.length === 5){
+            // all cards are dealt
+            this.checkHandRank()
+        }
+
+        this.setState({
+            communityHand: communityNewHand
+        });
+    }
+
 
     render(){
         return(
@@ -84,7 +128,7 @@ class PokerTable extends Component{
                 <div className="col-sm-12 buttons">
                     <button onClick={this.prepDeck} className="btn btn-primary">Deal</button>
                     <button onClick={()=>{this.bet(5)}} className="btn btn-success">Bet 5</button>
-                    <button onClick={this.prepDeck} className="btn btn-warning">Check</button>
+                    <button onClick={this.check} className="btn btn-warning">Check</button>
                     <button onClick={this.prepDeck} className="btn btn-danger">Fold</button>
                 </div>
             </div>
